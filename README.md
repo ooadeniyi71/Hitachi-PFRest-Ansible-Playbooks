@@ -4,6 +4,8 @@ Provision to and from your favourite hitachi array using sample playbooks that m
 * Hitachi Virtual Storage Platform 5000 Series
 * Hitachi Virtual Storage Platform E Series
 * Hitachi Virtual Storage Platform G130, G/F350, G/F370, G/F700, G/F900
+
+Adding a bunch of example workflow templates to the template folder.
 ## Requirements:
 Create a storage.json file. Sample storage.json file below:
 {
@@ -21,4 +23,4 @@ Version: 00.1:
 Ititial release, publishing items to Ansible galaxy with an example of creating volume using built in PFRest interface. 
 
 ## Example Playbooks:
-ansible-playbook workflow_create_volume_from_first_pool.yaml -e "my_volume_label=William my_volume_size_in_gb=12"
+ansible-playbook templates/workflow_create_volume_from_first_pool.yaml -e "my_volume_label=William my_volume_size_in_gb=12"
