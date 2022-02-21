@@ -21,3 +21,4 @@ Version: 00.1:
 Ititial release, publishing items to Ansible galaxy with an example of creating volume using built in PFRest interface. 
 
 ## Example Playbooks:
+ansible-playbook workflow_create_volume_from_first_pool.yaml -e "my_volume_label=William my_volume_size_in_gb=12"
