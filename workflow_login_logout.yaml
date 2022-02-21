@@ -42,4 +42,3 @@
           Sec-Fetch-Dest: 'empty'
         validate_certs: no
       register: logout_response
-    - debug: var=logout_response.json
