@@ -8,7 +8,16 @@ Provision to and from your favourite hitachi array using sample playbooks that m
 Create a storage.json file. Sample storage.json file below:
 {
   "storage_ip": "192.168.0.1",
-  "username": "ma---------ce",
-  "password": "ra------------ce"
+  "storage_username": "ma---------ce",
+  "storage_password": "ra------------ce"
 }
+
+This file contains your Hitachi array's SVP adres in the case of Enterprise arrays or one of the controllers in the case of modular arrays. The username/password fields are for a user account native to the array. 
 ## Known Issues:
+
+## Release Notes:
+Version: 00.1:
+
+Ititial release, publishing items to Ansible galaxy with an example of creating volume using built in PFRest interface. 
+
+## Example Playbooks:

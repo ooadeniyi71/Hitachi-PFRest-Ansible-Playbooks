@@ -4,8 +4,8 @@
     - storage.json
   vars:
     - myauthstring: "{{storage_username}}:{{storage_password}}"
-    - volume_label: "William"
-    - volume_capacity_in_gb: 1
+    - volume_label: "{{my_volume_label}}"
+    - volume_capacity_in_gb: "{{my_volume_size_in_gb}}"
   tasks:
     - name: 'Get Session Token'
       uri:
