@@ -9,7 +9,7 @@
   tasks:
     - include: login.yaml
 
-    - include: pool.yaml
+    - include: get_pool_data.yaml
     - name: 'Set My Pool to use'
       set_fact:
         pool_id: "{{ pool_data.json.data.0.poolId }}"
@@ -24,7 +24,7 @@
       when: (job_status_response.json.affectedResources is undefined)
 
     - include: change_ldev_name.yaml
-      -
+
     - include: get_job_status.yaml
     - debug: var=job_status_response
       when: (job_status_response.json.affectedResources is undefined)
