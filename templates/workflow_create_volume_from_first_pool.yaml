@@ -9,112 +9,23 @@
   tasks:
     - include: login.yaml
 
-    - name: 'Get Pool Data'
-      uri:
-        url: 'https://{{storage_ip}}/ConfigurationManager/v1/objects/pools'
-        method: GET
-        headers:
-          Connection: 'keep-alive'
-          Authorization: 'Session {{token_response.json.token}}'
-          Content-Type: 'application/json'
-          Accept-Language: 'en'
-          Accept: 'application/json, text/plain, */*'
-          Sec-Fetch-Site: 'same-origin'
-          Sec-Fetch-Mode: 'cors'
-        validate_certs: no
-      register: pool_response
-
-
+    - include: pool.yaml
     - name: 'Set My Pool to use'
       set_fact:
-        my_pool: "{{ pool_response.json.data.0.poolId }}"
-      when: (pool_response.json.data|length >0) and (my_pool is undefined)
+        pool_id: "{{ pool_data.json.data.0.poolId }}"
+      when: (pool_data.json.data|length >0) and (pool_id is undefined)
+    - debug: var=pool_data.json.data.0
 
-    - debug: var=pool_response.json.data.0
+    - include: create_volume.yaml
 
-    - name: 'Create Volume'
-      uri:
-        url: 'https://{{storage_ip}}/ConfigurationManager/v1/objects/ldevs'
-        method: POST
-        body:
-          { "byteFormatCapacity": "{{volume_capacity_in_gb}}G","poolId": "{{my_pool}}" }
-        body_format: json
-        status_code: 202
-        headers:
-          Connection: 'keep-alive'
-          Authorization: 'Session {{token_response.json.token}}'
-          Content-Type: 'application/json'
-          Accept-Language: 'en'
-          Accept: 'application/json, text/plain, */*'
-          Sec-Fetch-Site: 'same-origin'
-          Sec-Fetch-Mode: 'cors'
-          Sec-Fetch-Dest: 'empty'
-        validate_certs: no
-      register: create_volume_response
-      when: (my_pool is defined)
-
-
-    - name: 'Get Job Status'
-      uri:
-        url: 'https://{{storage_ip}}{{create_volume_response.json.self}}'
-        method: GET
-        headers:
-          Connection: 'keep-alive'
-          Authorization: 'Session {{token_response.json.token}}'
-          Content-Type: 'application/json'
-          Accept-Language: 'en'
-          Accept: 'application/json, text/plain, */*'
-          Sec-Fetch-Site: 'same-origin'
-          Sec-Fetch-Mode: 'cors'
-        validate_certs: no
-      register: job_status_response
-      until: job_status_response.json.state != "Started"
-      retries: 600
-      delay: 1
-
+    - include: get_job_status.yaml
     - debug: var=job_status_response.json.affectedResources
     - debug: var=job_status_response
       when: (job_status_response.json.affectedResources is undefined)
 
-    - name: 'Change LDEV Name'
-      uri:
-        url: 'https://{{storage_ip}}{{job_status_response.json.affectedResources.0}}'
-        method: PUT
-        body:
-          { "label": "{{volume_label}}" }
-        body_format: json
-        status_code: 202
-        headers:
-          Connection: 'keep-alive'
-          Authorization: 'Session {{token_response.json.token}}'
-          Content-Type: 'application/json'
-          Accept-Language: 'en'
-          Accept: 'application/json, text/plain, */*'
-          Sec-Fetch-Site: 'same-origin'
-          Sec-Fetch-Mode: 'cors'
-        validate_certs: no
-      register: ldev_name_response
-      when: (job_status_response.json.affectedResources is defined)
-
-    - name: 'Get Job Status'
-      uri:
-        url: 'https://{{storage_ip}}{{ldev_name_response.json.self}}'
-        method: GET
-        headers:
-          Connection: 'keep-alive'
-          Authorization: 'Session {{token_response.json.token}}'
-          Content-Type: 'application/json'
-          Accept-Language: 'en'
-          Accept: 'application/json, text/plain, */*'
-          Sec-Fetch-Site: 'same-origin'
-          Sec-Fetch-Mode: 'cors'
-        validate_certs: no
-      register: job_status_response
-      until: job_status_response.json.state != "Started"
-      retries: 600
-      delay: 1
-
-
+    - include: change_ldev_name.yaml
+      -
+    - include: get_job_status.yaml
     - debug: var=job_status_response
       when: (job_status_response.json.affectedResources is undefined)
 
